@@ -109,8 +109,7 @@ extern void teclado_task(void)
    /* guarda el nuevo estado de las teclas */
    estadoTeclas = inputs;
 
-   TerminateTask();
-}
+ }
 
 extern uint8_t teclado_getFlancos(void)
 {

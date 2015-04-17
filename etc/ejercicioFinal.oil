@@ -27,7 +27,68 @@ OSEK OSEK {
       TYPE = BASIC;
       SCHEDULE = NON;
    };
+   
+   TASK LedsTask {
+      PRIORITY = 10;
+      ACTIVATION = 1;
+      STACK = 1024;
+      TYPE = EXTENDED;
+      SCHEDULE = FULL;
+   };
+   
+ TASK TecladoTask {
+      PRIORITY = 5;
+      ACTIVATION = 1;
+      STACK = 1024;
+      TYPE = EXTENDED;
+      SCHEDULE = FULL;
+   };
+   
+   TASK ModbusTask {
+      PRIORITY = 2;
+      ACTIVATION = 1;
+      STACK = 1024;
+      TYPE = EXTENDED;
+      SCHEDULE = FULL;
+   }; 
 
+
+    ALARM ActivateLedsTask {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = LedsTask;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 1;
+         CYCLETIME = 5;
+         }
+      };
+      
+    ALARM ActivateTecladoTask {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = TecladoTask;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 2;
+         CYCLETIME = 5;
+         }
+      };
+      
+    ALARM ActivateModbusTask {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ModbusTask;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 3;
+         CYCLETIME = 5;
+         }
+      };
+      
    COUNTER HardwareCounter {
       MAXALLOWEDVALUE = 1000;
       TICKSPERBASE = 1;
@@ -35,6 +96,5 @@ OSEK OSEK {
       TYPE = HARDWARE;
       COUNTER = HWCOUNTER0;
    };
-
    
 };

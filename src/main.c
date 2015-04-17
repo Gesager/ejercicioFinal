@@ -147,6 +147,20 @@ TASK(InitTask)
    TerminateTask();
 }
 
+TASK(LedsTask)
+{
+   TerminateTask();
+}
+
+TASK(TecladoTask)
+{
+   TerminateTask();
+}
+
+TASK(ModbusTask)
+{
+   TerminateTask();
+}
 /** @} doxygen end group definition */
 /** @} doxygen end group definition */
 /*==================[end of file]============================================*/
