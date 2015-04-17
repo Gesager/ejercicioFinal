@@ -45,6 +45,8 @@
  *
  */
 
+#ifndef TEMPLATE_FILE_H
+#define TEMPLATE_FILE_H
 /** \brief Short description of this file
  **
  ** Long description of this file
@@ -69,76 +71,47 @@
  */
 
 /*==================[inclusions]=============================================*/
-#include "os.h"
-#include "ciaak.h"
-#include "leds.h"
 
-/*==================[macros and definitions]=================================*/
+/*==================[cplusplus]==============================================*/
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/*==================[internal data declaration]==============================*/
-static int32_t fd_out;
+/*==================[macros]=================================================*/
+/** \brief maximum value for a int16_t type */
+#define INT16_MAX   32767
 
-/*==================[internal functions declaration]=========================*/
+/** \brief minimum value for a int16_t type */
+#define INT16_MIN   -32768
 
-/*==================[internal data definition]===============================*/
+/*==================[typedef]================================================*/
+/** \brief Signed integer 16 bits */
+typedef signed short int16_t;
 
-/*==================[external data definition]===============================*/
+/** \brief Signed integer 32 bits type */
+typedef signed int int32_t;
 
-/*==================[internal functions definition]==========================*/
+/*==================[external data declaration]==============================*/
 
-/*==================[external functions definition]==========================*/
+/*==================[external functions declaration]=========================*/
+/** \brief Adds 2 16 bits signed and return a 16 bits signed value
+ **
+ ** If the result is bigger than the limit in 15 bits returns
+ ** INT16_MAX is lower than the limit in 15 bits returns
+ ** INT16_MIN
+ **
+ ** \param[in] 	  a first parameter to be added
+ ** \param[in]    b second parameter ot be added
+ ** \return E_OK  returns addition of a+b
+ **/
+extern int16_t Template_Sum16bits(int16_t const a, int16_t const b);
 
-extern void leds_init(void)
-{
-   /* open CIAA digital outputs */
-   fd_out = ciaaPOSIX_open("/dev/dio/out/0", O_RDWR);
-   leds_set(EDU_CIAA_NXP_RGB_ROJO);
+/*==================[cplusplus]==============================================*/
+#ifdef __cplusplus
 }
-
-extern void leds_toggle(uint8_t mask)
-{
-   uint8 leds;
-   leds = leds_get();
-   leds ^= mask;
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern void leds_on(uint8_t mask)
-{
-   uint8 leds;
-   leds= leds_get();
-   leds|= (mask);
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern void leds_off(uint8_t mask)
-{
-   uint8 leds=leds_get();
-   leds &= (~mask);
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern uint8_t leds_get(void)
-{
-   uint8 leds;
-   ciaaPOSIX_read(fd_out, &leds, 1);
-   return leds;
-}
-
-extern void leds_set(uint8_t value)
-{
-   uint8 leds;
-   leds = value;
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern void ledrojo(void)
-{
-   uint8 leds;
-   ciaaPOSIX_read(fd_out, &leds, 1);
-   leds ^= EDU_CIAA_NXP_LED2_ROJO;
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
+#endif
 /** @} doxygen end group definition */
 /** @} doxygen end group definition */
 /*==================[end of file]============================================*/
+#endif /* #ifndef TEMPLATE_FILE_H */
+

@@ -71,8 +71,11 @@
 /*==================[inclusions]=============================================*/
 #include "os.h"
 #include "ciaak.h"
-#include "leds.h"
 #include "teclado.h"
+#include "leds.h"
+#include "ManejoLeds.h"
+#include "ManejoTeclado.h"
+#include "ManejoModbus.h"
 #include "modbusSlave.h"
 
 /*==================[macros and definitions]=================================*/
@@ -149,16 +152,19 @@ TASK(InitTask)
 
 TASK(LedsTask)
 {
+   ManejoLeds();
    TerminateTask();
 }
 
 TASK(TecladoTask)
 {
+   ManejoTeclado();
    TerminateTask();
 }
 
 TASK(ModbusTask)
 {
+   ManejoModbus();
    TerminateTask();
 }
 /** @} doxygen end group definition */

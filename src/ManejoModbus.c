@@ -69,14 +69,19 @@
  */
 
 /*==================[inclusions]=============================================*/
+
 #include "os.h"
 #include "ciaak.h"
 #include "leds.h"
+#include "teclado.h"
+#include "modbusSlave.h"
+#include "ManejoTeclado.h"
+#include "ManejoLeds.h"
+#include "ManejoModbus.h"
 
 /*==================[macros and definitions]=================================*/
 
 /*==================[internal data declaration]==============================*/
-static int32_t fd_out;
 
 /*==================[internal functions declaration]=========================*/
 
@@ -88,57 +93,54 @@ static int32_t fd_out;
 
 /*==================[external functions definition]==========================*/
 
-extern void leds_init(void)
+void ManejoModbus(void)
 {
-   /* open CIAA digital outputs */
-   fd_out = ciaaPOSIX_open("/dev/dio/out/0", O_RDWR);
-   leds_set(EDU_CIAA_NXP_RGB_ROJO);
+
+   modbusSlave_task();
 }
 
-extern void leds_toggle(uint8_t mask)
+void procesarTeclas(uint16_t teclas)
 {
-   uint8 leds;
-   leds = leds_get();
-   leds ^= mask;
-   ciaaPOSIX_write(fd_out, &leds, 1);
+   GetResource(GLOBALES);
+     switch (teclas)
+     {
+     case NOFLANCOS:
+
+        break;
+     case TECLADO_TEC1_BIT:
+        if (tiltLed!=EDU_CIAA_NXP_RGB_ROJO)
+        {
+           tiltLed>>=1;
+        }
+
+        break;
+     case TECLADO_TEC2_BIT:
+        if (tiltLed!=EDU_CIAA_NXP_LED3_VERDE )
+              {
+                 tiltLed<<=1;
+              }
+         break;
+     case TECLADO_TEC3_BIT:
+        if (tiltPer!=MAX_PER_MS/TASK_PER_MS )
+                   {
+                      tiltPer+=PASO_MS/TASK_PER_MS;
+                   }
+              break;
+        break;
+     case TECLADO_TEC4_BIT:
+        if (tiltPer!=MIN_PER_MS/TASK_PER_MS )
+                         {
+                            tiltPer-=PASO_MS/TASK_PER_MS;
+                         }
+        break;
+     default:
+        break;
+
+     }
+     ReleaseResource(GLOBALES);
+
 }
 
-extern void leds_on(uint8_t mask)
-{
-   uint8 leds;
-   leds= leds_get();
-   leds|= (mask);
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern void leds_off(uint8_t mask)
-{
-   uint8 leds=leds_get();
-   leds &= (~mask);
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern uint8_t leds_get(void)
-{
-   uint8 leds;
-   ciaaPOSIX_read(fd_out, &leds, 1);
-   return leds;
-}
-
-extern void leds_set(uint8_t value)
-{
-   uint8 leds;
-   leds = value;
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern void ledrojo(void)
-{
-   uint8 leds;
-   ciaaPOSIX_read(fd_out, &leds, 1);
-   leds ^= EDU_CIAA_NXP_LED2_ROJO;
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
 /** @} doxygen end group definition */
 /** @} doxygen end group definition */
 /*==================[end of file]============================================*/

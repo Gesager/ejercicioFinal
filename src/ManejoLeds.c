@@ -72,11 +72,15 @@
 #include "os.h"
 #include "ciaak.h"
 #include "leds.h"
+#include "teclado.h"
+#include "ManejoLeds.h"
+#include "ManejoTeclado.h"
+#include "modbusSlave.h"
 
 /*==================[macros and definitions]=================================*/
 
+
 /*==================[internal data declaration]==============================*/
-static int32_t fd_out;
 
 /*==================[internal functions declaration]=========================*/
 
@@ -84,61 +88,47 @@ static int32_t fd_out;
 
 /*==================[external data definition]===============================*/
 
+
 /*==================[internal functions definition]==========================*/
 
 /*==================[external functions definition]==========================*/
 
-extern void leds_init(void)
+extern void ManejoLeds(void)
 {
-   /* open CIAA digital outputs */
-   fd_out = ciaaPOSIX_open("/dev/dio/out/0", O_RDWR);
-   leds_set(EDU_CIAA_NXP_RGB_ROJO);
+   static uint16 Count_per = MIN_PER_MS/TASK_PER_MS;
+   static uint8 actualLeds= EDU_CIAA_NXP_RGB_ROJO;
+
+
+   Count_per--;
+   if (Count_per==0)
+      {
+         leds_toggle(actualLeds);
+         Count_per = get_tiltPer();
+         if(actualLeds!=get_tiltLed())
+         {
+         leds_off(actualLeds);
+         actualLeds = get_tiltLed();
+
+         }
+      }
 }
 
-extern void leds_toggle(uint8_t mask)
+extern void ManejoLeds1(void)
 {
-   uint8 leds;
-   leds = leds_get();
-   leds ^= mask;
-   ciaaPOSIX_write(fd_out, &leds, 1);
+   static uint16 Count_per = MIN_PER_MS/TASK_PER_MS;
+   static uint8 actualLeds= EDU_CIAA_NXP_RGB_ROJO;
+
+
+   Count_per--;
+   if (Count_per==0)
+      {
+         leds_toggle(actualLeds);
+         Count_per = get_tiltPer();
+
+
+      }
 }
 
-extern void leds_on(uint8_t mask)
-{
-   uint8 leds;
-   leds= leds_get();
-   leds|= (mask);
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern void leds_off(uint8_t mask)
-{
-   uint8 leds=leds_get();
-   leds &= (~mask);
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern uint8_t leds_get(void)
-{
-   uint8 leds;
-   ciaaPOSIX_read(fd_out, &leds, 1);
-   return leds;
-}
-
-extern void leds_set(uint8_t value)
-{
-   uint8 leds;
-   leds = value;
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
-
-extern void ledrojo(void)
-{
-   uint8 leds;
-   ciaaPOSIX_read(fd_out, &leds, 1);
-   leds ^= EDU_CIAA_NXP_LED2_ROJO;
-   ciaaPOSIX_write(fd_out, &leds, 1);
-}
 /** @} doxygen end group definition */
 /** @} doxygen end group definition */
 /*==================[end of file]============================================*/
